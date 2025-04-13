@@ -55,3 +55,33 @@ router1:
         secret: secret
         session_log: router1.txt
 ```
+
+### Extra Netmiko platforms
+
+Netmiko does not easily let you add new custom platforms, thus a custom injection mechanism is provided via the `nornir_netmiko` plugin. To add a new platform, you need to provide `netmiko_extra_platforms` dictionnary, in the `user_defined` configuration of `InitNornir`. The key represent the platform name, while the value is the class to use.
+
+```python
+
+# Create a new device_type derived from linux
+from netmiko.linux.linux_ssh import LinuxSSH,
+
+class CustomSSH(LinuxSSH):
+    "Override LinuxSSH"
+
+    def _build_ssh_client(self) -> SSHClient:
+        """Allow passwordless authentication for HP devices being provisioned."""
+
+        print("Hello World from CustomSSH")
+        return super()._build_ssh_client()
+
+
+
+# When instanciating Nornir, just provide a mapping
+nr = InitNornir(
+    user_defined= {
+        "netmiko_extra_platforms": {
+                "linux_embedded": CustomSSH,
+            }
+        }
+    )
+```
