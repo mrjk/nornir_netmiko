@@ -64,8 +64,12 @@ class Netmiko:
 
         device_type = parameters["device_type"]
         connect_handler_cls = ConnectHandler
-        connect_handlers_map = configuration.user_defined.get("netmiko_extra_platforms", {})
-        assert isinstance(connect_handlers_map, dict), f"netmiko_extra_platforms must be a dict, got {type(connect_handlers_map)}"
+        connect_handlers_map = configuration.user_defined.get(
+            "netmiko_extra_platforms", {}
+        )
+        assert isinstance(
+            connect_handlers_map, dict
+        ), f"netmiko_extra_platforms must be a dict, got {type(connect_handlers_map)}"
         if device_type in connect_handlers_map:
             # If user provided a custom device_type, then directly use it and bypass
             # original ConnectHandler function.
@@ -75,8 +79,10 @@ class Netmiko:
             # to let the user being notified of the actual platform list.
             if device_type not in platforms:
                 extra_platforms = list(connect_handlers_map.keys())
-                platform_names = '\n'.join(sorted(platforms + extra_platforms))
-                raise ValueError(f"Unsupported device_type: {device_type}, currently supported platforms are:\n{platform_names}")
+                platform_names = "\n".join(sorted(platforms + extra_platforms))
+                raise ValueError(
+                    f"Unsupported device_type: {device_type}, currently supported platforms are:\n{platform_names}"
+                )
 
         extras = extras or {}
         parameters.update(extras)
